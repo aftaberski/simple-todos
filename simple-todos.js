@@ -25,9 +25,15 @@ if (Meteor.isClient) {
   Template.body.events({
     "submit .new-task": function (event) {
       // This function is called when the new task form is submitted
+
       var text = event.target.text.value;
 
-      Meteor.call("addTask", text);
+      Tasks.insert({
+        text: text,
+        createdAt: new Date(), // current time
+        owner: Meteor.userId(), // _id of logged in user
+        username: Meteor.user().username // un of logged in user
+      });
 
       // Clear form
       event.target.text.value = "";
@@ -48,6 +54,10 @@ if (Meteor.isClient) {
     "click .delete": function() {
       Tasks.remove(this._id);
     },
+  });
+
+  Accounts.ui.config({
+    passwordSignupFields: "USERNAME_ONLY"
   });
 }
 
